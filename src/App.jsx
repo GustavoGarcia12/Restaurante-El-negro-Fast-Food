@@ -1,122 +1,64 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import Header from './components/Header';
+import Cart from './components/Cart';
+import { menuData, categorias } from './data/menu';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const addToCart = (producto) => {
+    setCart([...cart, producto]);
+  };
+
+  const removeFromCart = (indexToRemove) => {
+    setCart(cart.filter((_, index) => index !== indexToRemove));
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-fondo text-white font-sans pb-20 relative">
+      <Header cartCount={cart.length} onOpenCart={() => setIsCartOpen(true)} />
+      <Cart 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        cart={cart} 
+        removeFromCart={removeFromCart} 
+      />
+      
+      <main className="max-w-4xl mx-auto p-4 mt-4">
+        {categorias.map((categoria) => {
+          const productos = menuData.filter(item => item.categoria === categoria);
+          if (productos.length === 0) return null;
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          return (
+            <section key={categoria} className="mb-8">
+              <h2 className="text-2xl font-bold text-fuego-amarillo mb-4 border-b border-fuego-amarillo/30 pb-2">
+                {categoria}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {productos.map(producto => (
+                  <div key={producto.id} className="bg-tarjeta p-4 rounded-xl border border-gray-800 flex justify-between items-center shadow-sm">
+                    <div>
+                      <h3 className="font-semibold text-lg text-gray-100">{producto.nombre}</h3>
+                      <p className="text-fuego-naranja font-bold mt-1">
+                        ${producto.precio.toLocaleString('es-CO')}
+                      </p>
+                    </div>
+                    <button 
+                      onClick={() => addToCart(producto)}
+                      className="bg-fuego-rojo hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors active:scale-95"
+                    >
+                      Agregar
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
