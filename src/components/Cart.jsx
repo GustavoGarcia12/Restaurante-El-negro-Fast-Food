@@ -1,6 +1,6 @@
 import { X, Trash2 } from 'lucide-react';
 
-export default function Cart({ isOpen, onClose, cart, removeFromCart }) {
+export default function Cart({ isOpen, onClose, cart, removeFromCart, onProceedToPay }) {
   if (!isOpen) return null;
 
   const total = cart.reduce((sum, item) => sum + item.precio, 0);
@@ -43,6 +43,7 @@ export default function Cart({ isOpen, onClose, cart, removeFromCart }) {
             <span className="font-bold text-fuego-naranja">${total.toLocaleString('es-CO')}</span>
           </div>
           <button 
+            onClick={onProceedToPay}
             disabled={cart.length === 0}
             className="w-full bg-fuego-rojo hover:bg-red-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-bold py-3 rounded-lg transition-colors"
           >

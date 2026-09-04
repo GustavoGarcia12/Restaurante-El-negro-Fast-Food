@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import Header from './components/Header';
 import Cart from './components/Cart';
+import Checkout from './components/Checkout';
 import { menuData, categorias } from './data/menu';
 
 function App() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const addToCart = (producto) => {
     setCart([...cart, producto]);
@@ -15,14 +17,30 @@ function App() {
     setCart(cart.filter((_, index) => index !== indexToRemove));
   };
 
+  const handleProceedToPay = () => {
+    setIsCartOpen(false);
+    setIsCheckoutOpen(true);
+  };
+
+  const totalCart = cart.reduce((sum, item) => sum + item.precio, 0);
+
   return (
     <div className="min-h-screen bg-fondo text-white font-sans pb-20 relative">
       <Header cartCount={cart.length} onOpenCart={() => setIsCartOpen(true)} />
+      
       <Cart 
         isOpen={isCartOpen} 
         onClose={() => setIsCartOpen(false)} 
         cart={cart} 
-        removeFromCart={removeFromCart} 
+        removeFromCart={removeFromCart}
+        onProceedToPay={handleProceedToPay}
+      />
+
+      <Checkout 
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        cart={cart}
+        total={totalCart}
       />
       
       <main className="max-w-4xl mx-auto p-4 mt-4">
